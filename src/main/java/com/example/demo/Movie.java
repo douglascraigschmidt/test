@@ -15,6 +15,7 @@ import java.util.Optional;
  */
 @SuppressWarnings("DataFlowIssue")
 
+@NoArgsConstructor(force = true)
 @Entity
 @Table(name = "movies")
 public class Movie
@@ -36,11 +37,15 @@ public class Movie
      * The encoding of the movie properties.  {@link FetchType#EAGER}
      * ensures this code works with parallel stream.
      */
-    // @Column(name = "vector")
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "movie_vector", joinColumns = @JoinColumn(name = "id"))
+
     @Column(name = "vector")
-    public List<Double> vector;
+    @Convert(converter = DoubleListConverter.class)
+    List<Double> vector;
+
+    public Movie(String id, List<Double> vector) {
+        this.id = id;
+        this.vector = vector;
+    }
 
     /**
      * Perform a case-insensitive comparison of this {@link Movie}
